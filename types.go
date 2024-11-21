@@ -11,11 +11,11 @@ const jsonRPCVersion = "2.0"
 type Request struct {
 	ctx     context.Context
 	url     string
-	Vars    map[string]interface{} `json:"-"`
-	JSONRPC string                 `json:"jsonrpc"`
-	Method  string                 `json:"method"`
-	Params  json.RawMessage        `json:"params"`
-	ID      interface{}            `json:"id"`
+	Vars    map[string]string `json:"-"`
+	JSONRPC string            `json:"jsonrpc"`
+	Method  string            `json:"method"`
+	Params  json.RawMessage   `json:"params"`
+	ID      interface{}       `json:"id"`
 }
 
 // Response is a JSON-RPC response.

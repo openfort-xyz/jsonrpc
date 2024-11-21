@@ -12,7 +12,7 @@ type Router struct {
 	defaultHandler *Handler
 	middlewares    []Middleware
 	agent          string
-	vars           func(*http.Request) map[string]interface{}
+	vars           func(*http.Request) map[string]string
 }
 
 // Handler is a JSON-RPC 2.0 handler.

@@ -29,7 +29,7 @@ func WithRouterAgent(agent string) RouterOption {
 	}
 }
 
-func WithRouterVars(vars func(*http.Request) map[string]interface{}) RouterOption {
+func WithRouterVars(vars func(*http.Request) map[string]string) RouterOption {
 	return func(r *Router) {
 		r.vars = vars
 	}
