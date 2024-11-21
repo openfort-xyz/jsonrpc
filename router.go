@@ -85,7 +85,11 @@ func (r *Router) writeResponse(w http.ResponseWriter, resp *Response) {
 	if r.agent != "" {
 		w.Header().Set("User-Agent", r.agent)
 	}
-	w.WriteHeader(resp.StatusCode)
+	statusCode := resp.StatusCode
+	if statusCode == 0 {
+		statusCode = http.StatusOK
+	}
+	w.WriteHeader(statusCode)
 	_ = json.NewEncoder(w).Encode(resp)
 }
 
