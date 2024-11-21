@@ -12,6 +12,7 @@ type Router struct {
 	defaultHandler *Handler
 	middlewares    []Middleware
 	agent          string
+	vars           func(*http.Request) map[string]interface{}
 }
 
 // Handler is a JSON-RPC 2.0 handler.
@@ -56,6 +57,10 @@ func (r *Router) ServeHTTP(w http.ResponseWriter, req *http.Request) {
 	if err != nil {
 		r.writeError(w, -32700, "Parse error", err.Error())
 		return
+	}
+
+	if r.vars != nil {
+		request.Vars = r.vars(req)
 	}
 
 	handler, ok := r.methodHandlers[request.Method]
