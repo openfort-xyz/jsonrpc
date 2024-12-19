@@ -1,6 +1,9 @@
 package jsonrpc
 
-import "net/http"
+import (
+	"log/slog"
+	"net/http"
+)
 
 // ClientOption is a function that configures a Client.
 type ClientOption func(c *Client)
@@ -9,6 +12,12 @@ type ClientOption func(c *Client)
 func WithHTTPClient(httpClient *http.Client) ClientOption {
 	return func(c *Client) {
 		c.http = httpClient
+	}
+}
+
+func WithLogger(logger *slog.Logger) ClientOption {
+	return func(c *Client) {
+		c.logger = logger
 	}
 }
 

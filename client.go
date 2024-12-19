@@ -6,13 +6,16 @@ import (
 	"encoding/json"
 	"errors"
 	"io"
+	"log/slog"
 	"net/http"
+	"time"
 )
 
 // Client is a JSON-RPC client.
 type Client struct {
-	http  *http.Client
-	agent string
+	http   *http.Client
+	agent  string
+	logger *slog.Logger
 }
 
 // NewClient creates a new JSON-RPC client with the given ClientOption.
@@ -57,7 +60,18 @@ func (c *Client) Do(req *Request) (*Response, error) {
 		httpReq.Header.Set("User-Agent", c.agent)
 	}
 
+	start := time.Now()
 	httpResp, err := c.http.Do(httpReq)
+	duration := time.Since(start)
+	if c.logger != nil {
+		c.logger.InfoContext(
+			req.ctx,
+			"Executed JSON-RPC request",
+			slog.String("method", req.Method),
+			slog.String("url", req.url),
+			slog.Duration("duration", duration),
+		)
+	}
 	if err != nil {
 		return nil, err
 	}
