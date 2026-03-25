@@ -27,7 +27,7 @@ jobs:
       run: go mod tidy
 
     - name: Run golangci-lint
-      uses: golangci/golangci-lint-action@v4
+      uses: golangci/golangci-lint-action@d6238b002a20823d52840fda27e2d4891c5952dc # v4
       with:
         version: v1.57
 
