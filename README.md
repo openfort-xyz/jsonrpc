@@ -3,7 +3,7 @@
 # jsonrpc
 
 ```go
-import "go.openfort.xyz/jsonrpc"
+import "github.com/openfort-xyz/jsonrpc"
 ```
 
 ## Index
@@ -14,6 +14,7 @@ import "go.openfort.xyz/jsonrpc"
 - [type ClientOption](<#ClientOption>)
   - [func WithClientAgent\(agent string\) ClientOption](<#WithClientAgent>)
   - [func WithHTTPClient\(httpClient \*http.Client\) ClientOption](<#WithHTTPClient>)
+  - [func WithLogger\(logger \*slog.Logger\) ClientOption](<#WithLogger>)
 - [type Error](<#Error>)
 - [type Handler](<#Handler>)
 - [type Middleware](<#Middleware>)
@@ -28,10 +29,11 @@ import "go.openfort.xyz/jsonrpc"
   - [func \(r \*Router\) Use\(middleware Middleware\)](<#Router.Use>)
 - [type RouterOption](<#RouterOption>)
   - [func WithRouterAgent\(agent string\) RouterOption](<#WithRouterAgent>)
+  - [func WithRouterVars\(vars func\(\*http.Request\) map\[string\]string\) RouterOption](<#WithRouterVars>)
 
 
 <a name="Client"></a>
-## type Client
+## type [Client](<https://github.com/openfort-xyz/jsonrpc/blob/main/client.go#L15-L19>)
 
 Client is a JSON\-RPC client.
 
@@ -42,7 +44,7 @@ type Client struct {
 ```
 
 <a name="NewClient"></a>
-### func NewClient
+### func [NewClient](<https://github.com/openfort-xyz/jsonrpc/blob/main/client.go#L22>)
 
 ```go
 func NewClient(opts ...ClientOption) *Client
@@ -51,7 +53,7 @@ func NewClient(opts ...ClientOption) *Client
 NewClient creates a new JSON\-RPC client with the given ClientOption.
 
 <a name="Client.Do"></a>
-### func \(\*Client\) Do
+### func \(\*Client\) [Do](<https://github.com/openfort-xyz/jsonrpc/blob/main/client.go#L47>)
 
 ```go
 func (c *Client) Do(req *Request) (*Response, error)
@@ -60,7 +62,7 @@ func (c *Client) Do(req *Request) (*Response, error)
 Do sends the given JSON\-RPC Request and returns the JSON\-RPC Response.
 
 <a name="ClientOption"></a>
-## type ClientOption
+## type [ClientOption](<https://github.com/openfort-xyz/jsonrpc/blob/main/options.go#L9>)
 
 ClientOption is a function that configures a Client.
 
@@ -69,7 +71,7 @@ type ClientOption func(c *Client)
 ```
 
 <a name="WithClientAgent"></a>
-### func WithClientAgent
+### func [WithClientAgent](<https://github.com/openfort-xyz/jsonrpc/blob/main/options.go#L25>)
 
 ```go
 func WithClientAgent(agent string) ClientOption
@@ -78,7 +80,7 @@ func WithClientAgent(agent string) ClientOption
 WithClientAgent sets the User\-Agent for the Client.
 
 <a name="WithHTTPClient"></a>
-### func WithHTTPClient
+### func [WithHTTPClient](<https://github.com/openfort-xyz/jsonrpc/blob/main/options.go#L12>)
 
 ```go
 func WithHTTPClient(httpClient *http.Client) ClientOption
@@ -86,8 +88,17 @@ func WithHTTPClient(httpClient *http.Client) ClientOption
 
 WithHTTPClient sets the HTTP client for the Client.
 
+<a name="WithLogger"></a>
+### func [WithLogger](<https://github.com/openfort-xyz/jsonrpc/blob/main/options.go#L18>)
+
+```go
+func WithLogger(logger *slog.Logger) ClientOption
+```
+
+
+
 <a name="Error"></a>
-## type Error
+## type [Error](<https://github.com/openfort-xyz/jsonrpc/blob/main/types.go#L32-L36>)
 
 Error is a JSON\-RPC error.
 
@@ -100,7 +111,7 @@ type Error struct {
 ```
 
 <a name="Handler"></a>
-## type Handler
+## type [Handler](<https://github.com/openfort-xyz/jsonrpc/blob/main/router.go#L19>)
 
 Handler is a JSON\-RPC 2.0 handler.
 
@@ -109,7 +120,7 @@ type Handler func(context.Context, *Request) *Response
 ```
 
 <a name="Middleware"></a>
-## type Middleware
+## type [Middleware](<https://github.com/openfort-xyz/jsonrpc/blob/main/router.go#L22>)
 
 Middleware is a JSON\-RPC 2.0 middleware.
 
@@ -118,22 +129,23 @@ type Middleware func(Handler) Handler
 ```
 
 <a name="Request"></a>
-## type Request
+## type [Request](<https://github.com/openfort-xyz/jsonrpc/blob/main/types.go#L11-L19>)
 
 Request is a JSON\-RPC request.
 
 ```go
 type Request struct {
-    JSONRPC string          `json:"jsonrpc"`
-    Method  string          `json:"method"`
-    Params  json.RawMessage `json:"params"`
-    ID      interface{}     `json:"id"`
+    Vars    map[string]string `json:"-"`
+    JSONRPC string            `json:"jsonrpc"`
+    Method  string            `json:"method"`
+    Params  json.RawMessage   `json:"params"`
+    ID      interface{}       `json:"id"`
     // contains filtered or unexported fields
 }
 ```
 
 <a name="NewRequestWithContext"></a>
-### func NewRequestWithContext
+### func [NewRequestWithContext](<https://github.com/openfort-xyz/jsonrpc/blob/main/client.go#L35>)
 
 ```go
 func NewRequestWithContext(ctx context.Context, id interface{}, method, url string, params json.RawMessage) *Request
@@ -142,7 +154,7 @@ func NewRequestWithContext(ctx context.Context, id interface{}, method, url stri
 NewRequestWithContext creates a new JSON\-RPC request with the given context, id, method, url, and params.
 
 <a name="Response"></a>
-## type Response
+## type [Response](<https://github.com/openfort-xyz/jsonrpc/blob/main/types.go#L22-L29>)
 
 Response is a JSON\-RPC response.
 
@@ -158,7 +170,7 @@ type Response struct {
 ```
 
 <a name="Router"></a>
-## type Router
+## type [Router](<https://github.com/openfort-xyz/jsonrpc/blob/main/router.go#L10-L16>)
 
 Router is a JSON\-RPC 2.0 router.
 
@@ -169,7 +181,7 @@ type Router struct {
 ```
 
 <a name="NewRouter"></a>
-### func NewRouter
+### func [NewRouter](<https://github.com/openfort-xyz/jsonrpc/blob/main/router.go#L25>)
 
 ```go
 func NewRouter(opts ...RouterOption) *Router
@@ -178,7 +190,7 @@ func NewRouter(opts ...RouterOption) *Router
 NewRouter creates a new JSON\-RPC 2.0 router with the given RouterOption.
 
 <a name="Router.DefaultHandler"></a>
-### func \(\*Router\) DefaultHandler
+### func \(\*Router\) [DefaultHandler](<https://github.com/openfort-xyz/jsonrpc/blob/main/router.go#L43>)
 
 ```go
 func (r *Router) DefaultHandler(handler Handler)
@@ -187,7 +199,7 @@ func (r *Router) DefaultHandler(handler Handler)
 DefaultHandler sets the default JSON\-RPC 2.0 handler.
 
 <a name="Router.HandleFunc"></a>
-### func \(\*Router\) HandleFunc
+### func \(\*Router\) [HandleFunc](<https://github.com/openfort-xyz/jsonrpc/blob/main/router.go#L38>)
 
 ```go
 func (r *Router) HandleFunc(method string, handler Handler)
@@ -196,7 +208,7 @@ func (r *Router) HandleFunc(method string, handler Handler)
 HandleFunc registers a JSON\-RPC 2.0 handler for the given method.
 
 <a name="Router.ServeHTTP"></a>
-### func \(\*Router\) ServeHTTP
+### func \(\*Router\) [ServeHTTP](<https://github.com/openfort-xyz/jsonrpc/blob/main/router.go#L53>)
 
 ```go
 func (r *Router) ServeHTTP(w http.ResponseWriter, req *http.Request)
@@ -205,7 +217,7 @@ func (r *Router) ServeHTTP(w http.ResponseWriter, req *http.Request)
 ServeHTTP implements the http.Handler interface.
 
 <a name="Router.Use"></a>
-### func \(\*Router\) Use
+### func \(\*Router\) [Use](<https://github.com/openfort-xyz/jsonrpc/blob/main/router.go#L48>)
 
 ```go
 func (r *Router) Use(middleware Middleware)
@@ -214,7 +226,7 @@ func (r *Router) Use(middleware Middleware)
 Use registers a JSON\-RPC 2.0 Middleware.
 
 <a name="RouterOption"></a>
-## type RouterOption
+## type [RouterOption](<https://github.com/openfort-xyz/jsonrpc/blob/main/options.go#L32>)
 
 RouterOption is a function that configures a Router.
 
@@ -223,12 +235,21 @@ type RouterOption func(r *Router)
 ```
 
 <a name="WithRouterAgent"></a>
-### func WithRouterAgent
+### func [WithRouterAgent](<https://github.com/openfort-xyz/jsonrpc/blob/main/options.go#L35>)
 
 ```go
 func WithRouterAgent(agent string) RouterOption
 ```
 
 WithRouterAgent sets the User\-Agent for the Router.
+
+<a name="WithRouterVars"></a>
+### func [WithRouterVars](<https://github.com/openfort-xyz/jsonrpc/blob/main/options.go#L41>)
+
+```go
+func WithRouterVars(vars func(*http.Request) map[string]string) RouterOption
+```
+
+
 
 Generated by [gomarkdoc](<https://github.com/princjef/gomarkdoc>)
