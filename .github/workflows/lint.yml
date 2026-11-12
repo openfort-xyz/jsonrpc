@@ -16,10 +16,10 @@ jobs:
 
     steps:
     - name: Checkout code
-      uses: actions/checkout@v3
+      uses: actions/checkout@v3.7.0
 
     - name: Set up Go
-      uses: actions/setup-go@v4
+      uses: actions/setup-go@v4.3.0
       with:
         go-version: 1.22
 
@@ -27,7 +27,7 @@ jobs:
       run: go mod tidy
 
     - name: Run golangci-lint
-      uses: golangci/golangci-lint-action@d6238b002a20823d52840fda27e2d4891c5952dc # v4
+      uses: golangci/golangci-lint-action@v4.0.1
       with:
         version: v1.57
 
